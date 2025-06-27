@@ -1,7 +1,7 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 
-const JsonView = dynamic(() => import('@uiw/react-json-view').then(mod => mod.default), { 
+const JsonView = dynamic(() => import('@uiw/react-json-view'), { 
   ssr: false,
   loading: () => <div className="animate-pulse bg-gray-100 rounded h-20"></div>
 });
@@ -21,15 +21,6 @@ export default function JsonViewer({ data, name, collapsed = false, theme = 'git
         collapsed={collapsed ? 1 : false}
         displayDataTypes={false}
         displayObjectSize={false}
-        style={{
-          '--w-rjv-font-family': 'ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace',
-          '--w-rjv-color': '#1e293b',
-          '--w-rjv-background-color': 'transparent',
-          '--w-rjv-border-color': '#e2e8f0',
-          '--w-rjv-border-radius': '0.375rem',
-          '--w-rjv-line-height': '1.5',
-          fontSize: '0.875rem'
-        }}
       />
     </div>
   );
