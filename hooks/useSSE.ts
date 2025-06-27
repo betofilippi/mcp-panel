@@ -38,9 +38,13 @@ export function useSSE(url: string | null, options: UseSSEOptions = {}) {
       signal: abortController.signal,
       
       async onopen(response) {
-        setIsConnected(true);
-        setError(null);
-        options.onOpen?.();
+        if (response.ok) {
+          setIsConnected(true);
+          setError(null);
+          options.onOpen?.();
+        } else {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
       },
 
       onmessage(event) {
@@ -58,10 +62,8 @@ export function useSSE(url: string | null, options: UseSSEOptions = {}) {
         setIsConnected(false);
         options.onError?.(err as Error);
         
-        // Return false to stop retrying
-        if (err.name === 'AbortError') {
-          return false;
-        }
+        // Throw error to trigger retry
+        throw err;
       },
 
       onclose() {
@@ -70,7 +72,19 @@ export function useSSE(url: string | null, options: UseSSEOptions = {}) {
       },
 
       openWhenHidden: true,
-      retryInterval: options.retryInterval || 3000,
+      
+      // Custom fetch implementation to handle errors properly
+      fetch: async (input, init) => {
+        const response = await fetch(input, init);
+        return response;
+      }
+    }).catch((err) => {
+      if (err.name !== 'AbortError') {
+        console.error('SSE connection error:', err);
+        setError(err);
+        setIsConnected(false);
+        options.onError?.(err);
+      }
     });
   }, [url, options]);
 
@@ -99,6 +113,6 @@ export function useSSE(url: string | null, options: UseSSEOptions = {}) {
     error,
     clearMessages,
     reconnect: connect,
-    disconnect,
+    disconnect
   };
 }
