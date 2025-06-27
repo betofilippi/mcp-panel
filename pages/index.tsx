@@ -105,7 +105,7 @@ export default function Dashboard() {
     }
   };
 
-  const categories = ['all', ...new Set(apps.map(app => app.category).filter(Boolean))];
+  const categories = ['all', ...Array.from(new Set(apps.map(app => app.category).filter(Boolean)))];
 
   const filteredApps = apps.filter(app => {
     const matchesSearch = app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
