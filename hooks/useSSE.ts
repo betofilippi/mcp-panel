@@ -37,7 +37,7 @@ export function useSSE(url: string | null, options: UseSSEOptions = {}) {
     fetchEventSource(url, {
       signal: abortController.signal,
       
-      onopen() {
+      async onopen(response) {
         setIsConnected(true);
         setError(null);
         options.onOpen?.();
