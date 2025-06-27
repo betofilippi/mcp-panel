@@ -1,7 +1,8 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 
-const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
+const ReactJson = dynamic(() => import('@uiw/react-json-view')
+    .then(mod => mod.default || mod), { ssr: false });
 
 interface JsonViewerProps {
   data: any;
@@ -18,8 +19,7 @@ export default function JsonViewer({
 }: JsonViewerProps) {
   return (
     <div className="json-viewer">
-      <ReactJson
-        src={data}
+      <ReactJson value={data}
         name={name}
         collapsed={collapsed}
         theme={theme}
